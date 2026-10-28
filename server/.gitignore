@@ -1,0 +1,78 @@
+# ==========================================
+# ENVIRONMENT VARIABLES (Sabse Important)
+# ==========================================
+# Passwords, API keys, aur secrets kabhi push nahi karne chahiye
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+server/.env
+
+# ==========================================
+# NODE MODULES (Dependencies)
+# ==========================================
+# Ye folders bahut heavy hote hain aur package.json se dobara install ho sakte hain
+node_modules/
+node_modules
+*/node_modules
+client/node_modules
+server/node_modules
+
+# ==========================================
+# BUILD OUTPUTS (React/Vite build)
+# ==========================================
+dist/
+build/
+client/dist/
+client/build/
+
+# ==========================================
+# UPLOADS (User Files)
+# ==========================================
+# Users ke dwara upload ki gayi files (DP, evidence) GitHub par nahi jani chahiye
+server/uploads/*
+!server/uploads/.gitkeep
+
+# ==========================================
+# LOGS & DEBUGGING
+# ==========================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# OS SPECIFIC FILES
+# ==========================================
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==========================================
+# EDITOR SPECIFIC FILES
+# ==========================================
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# WebStorm / IntelliJ
+.idea/
+*.iml
+
+# ==========================================
+# OTHER
+# ==========================================
+coverage/
+.nyc_output/
+.env.test

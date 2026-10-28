@@ -1,0 +1,196 @@
+.pin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 30, 54, 0.7);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+  padding: 2vh 2vw;
+}
+
+.pin-modal {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 3vh 2.5vw;
+  width: 30vw;
+  max-width: 420px;
+  position: relative;
+  animation: slideUp 0.3s ease;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1.5vh;
+  right: 1vw;
+  width: 2.5vw;
+  height: 2.5vw;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  font-size: 1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: var(--gray-200);
+  color: var(--gray-800);
+}
+
+.pin-modal-header {
+  text-align: center;
+  margin-bottom: 2.5vh;
+}
+
+.pin-icon {
+  font-size: 2.5vw;
+  margin-bottom: 1vh;
+}
+
+.pin-modal-header h2 {
+  font-size: 1.3vw;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin-bottom: 0.5vh;
+}
+
+.pin-modal-header p {
+  font-size: 0.8vw;
+  color: var(--gray-500);
+}
+
+.pin-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 0.8vw;
+  margin-bottom: 2vh;
+}
+
+.pin-input {
+  width: 3vw;
+  height: 3.5vw;
+  min-width: 48px;
+  min-height: 52px;
+  text-align: center;
+  font-size: 1.5vw;
+  font-weight: 700;
+  color: var(--navy-dark);
+  background: var(--gray-50);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  transition: all 0.2s;
+}
+
+.pin-input:focus {
+  border-color: var(--accent-blue);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  transform: scale(1.05);
+}
+
+.pin-error {
+  padding: 1vh 1vw;
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--accent-red);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.8vw;
+  text-align: center;
+  margin-bottom: 1.5vh;
+  animation: slideDown 0.25s ease;
+}
+
+.pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6vw;
+  margin-bottom: 2vh;
+}
+
+.keypad-btn {
+  padding: 1.5vh;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-size: 1.1vw;
+  font-weight: 600;
+  color: var(--gray-800);
+  transition: all 0.15s;
+}
+
+.keypad-btn:hover {
+  background: var(--gray-100);
+  transform: scale(1.03);
+}
+
+.keypad-btn:active {
+  transform: scale(0.97);
+}
+
+.keypad-delete {
+  background: rgba(220, 38, 38, 0.06);
+  color: var(--accent-red);
+  border-color: rgba(220, 38, 38, 0.15);
+}
+
+.keypad-submit {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--accent-green);
+  border-color: rgba(34, 197, 94, 0.25);
+}
+
+.pin-submit-btn {
+  width: 100%;
+  padding: 1.4vh;
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%);
+  color: var(--white);
+  border-radius: var(--radius-md);
+  font-size: 0.95vw;
+  font-weight: 600;
+  transition: all 0.25s;
+}
+
+.pin-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.pin-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .pin-modal { width: 40vw; }
+  .pin-modal-header h2 { font-size: 1.8vw; }
+  .pin-modal-header p { font-size: 1.1vw; }
+  .pin-input { font-size: 2vw; width: 4vw; height: 5vw; }
+  .keypad-btn { font-size: 1.5vw; }
+  .pin-submit-btn { font-size: 1.3vw; }
+  .pin-error { font-size: 1.1vw; }
+  .modal-close { font-size: 1.4vw; width: 3vw; height: 3vw; }
+  .pin-icon { font-size: 3.5vw; }
+}
+
+@media (max-width: 768px) {
+  .pin-modal { width: 90vw; padding: 4vh 5vw; }
+  .pin-modal-header h2 { font-size: 5vw; }
+  .pin-modal-header p { font-size: 3vw; }
+  .pin-icon { font-size: 8vw; }
+  .pin-input { width: 15vw; height: 15vw; font-size: 6vw; }
+  .pin-inputs { gap: 3vw; }
+  .pin-keypad { gap: 2vw; }
+  .keypad-btn { font-size: 5vw; padding: 2vh; }
+  .pin-submit-btn { font-size: 3.5vw; padding: 2vh; }
+  .pin-error { font-size: 3vw; }
+  .modal-close { font-size: 4vw; width: 8vw; height: 8vw; }
+}

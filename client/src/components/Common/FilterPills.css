@@ -1,0 +1,100 @@
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5vh 1.5vw;
+  padding: 1.5vh 1.5vw;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 2vh;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+}
+
+.filter-label {
+  font-size: 0.8vw;
+  font-weight: 600;
+  color: var(--gray-600);
+  white-space: nowrap;
+}
+
+.pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5vw;
+}
+
+.filter-pill {
+  padding: 0.6vh 1vw;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  color: var(--gray-600);
+  font-size: 0.75vw;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-pill:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+  color: var(--gray-800);
+}
+
+.filter-pill.active {
+  background: var(--navy-dark);
+  color: var(--white);
+  border-color: var(--navy-dark);
+}
+
+.filter-pill.status-pill.active {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+.sort-group {
+  margin-left: auto;
+}
+
+.sort-select {
+  padding: 0.6vh 1vw;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 0.75vw;
+  color: var(--gray-700);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.sort-select:hover {
+  border-color: var(--gray-300);
+}
+
+.sort-select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+@media (max-width: 1024px) {
+  .filter-label { font-size: 1vw; }
+  .filter-pill { font-size: 0.95vw; padding: 0.7vh 1.2vw; }
+  .sort-select { font-size: 0.95vw; }
+}
+
+@media (max-width: 768px) {
+  .filter-section { padding: 2vh 3vw; gap: 2vh; }
+  .filter-group { flex-direction: column; align-items: flex-start; width: 100%; gap: 1vh; }
+  .filter-label { font-size: 3vw; }
+  .pills-container { width: 100%; }
+  .filter-pill { font-size: 2.8vw; padding: 1vh 3vw; }
+  .sort-group { margin-left: 0; }
+  .sort-select { font-size: 2.8vw; padding: 1vh 3vw; width: 100%; }
+}
