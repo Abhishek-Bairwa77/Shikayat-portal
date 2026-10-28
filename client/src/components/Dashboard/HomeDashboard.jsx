@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { grievanceAPI } from '../../services/api';
+import { Icons } from '../../Icons'; // 👈 Centralized Import
 import Header from '../Common/Header';
 import FilterPills from '../Common/FilterPills';
 import ProblemFeed from '../ProblemCards/ProblemFeed';
@@ -71,7 +72,6 @@ const HomeDashboard = () => {
     fetchStats();
   }, []);
 
-  // Handle vote click - open PIN modal
   const handleVoteClick = (grievance) => {
     setPinModal({
       isOpen: true,
@@ -95,15 +95,12 @@ const HomeDashboard = () => {
     });
   };
 
-  // Handle PIN submission
   const handlePinSubmit = async (pin) => {
-    // First verify the PIN format via API
     const pinCheck = await verifyActionPin(pin);
     if (!pinCheck.success) {
       return { success: false, error: pinCheck.error };
     }
 
-    // Execute pending action
     if (pinModal.pendingAction) {
       const result = await pinModal.pendingAction(pin);
       if (result.success) {
@@ -114,7 +111,6 @@ const HomeDashboard = () => {
     return { success: true };
   };
 
-  // Handle complaint form submission - needs PIN
   const handleComplaintPinRequired = ({ submitFn }) => {
     setPinModal({
       isOpen: true,
@@ -144,27 +140,31 @@ const HomeDashboard = () => {
       <Header onOpenComplaint={() => setIsComplaintOpen(true)} />
 
       <main className="dashboard-main">
-        {/* Welcome Banner */}
         <div className="welcome-banner">
           <div className="welcome-text">
-            <h2>Welcome back, {user?.username}! 👋</h2>
+            <h2>Welcome back, {user?.username}!</h2>
             <p>Your voice matters. Report issues anonymously and vote to prioritize what needs attention.</p>
           </div>
+          
           {stats && (
             <div className="stats-grid">
               <div className="stat-card">
+                <span className="stat-icon"><Icons.Clipboard size={20} /></span>
                 <span className="stat-number">{stats.total}</span>
                 <span className="stat-label">Total Issues</span>
               </div>
               <div className="stat-card stat-resolved">
+                <span className="stat-icon"><Icons.StatusResolved size={20} /></span>
                 <span className="stat-number">{stats.resolved}</span>
                 <span className="stat-label">Resolved</span>
               </div>
               <div className="stat-card stat-progress">
+                <span className="stat-icon"><Icons.StatusProgress size={20} /></span>
                 <span className="stat-number">{stats.inProgress}</span>
                 <span className="stat-label">In Progress</span>
               </div>
               <div className="stat-card stat-priority">
+                <span className="stat-icon"><Icons.Flame size={20} /></span>
                 <span className="stat-number">{stats.highPriority}</span>
                 <span className="stat-label">High Priority</span>
               </div>
@@ -172,7 +172,6 @@ const HomeDashboard = () => {
           )}
         </div>
 
-        {/* Filters */}
         <FilterPills
           activeDepartment={department}
           onDepartmentChange={setDepartment}
@@ -182,7 +181,6 @@ const HomeDashboard = () => {
           onSortChange={setSortBy}
         />
 
-        {/* Feed */}
         <ProblemFeed
           grievances={grievances}
           loading={loading}
@@ -190,7 +188,6 @@ const HomeDashboard = () => {
         />
       </main>
 
-      {/* Complaint Drawer */}
       <ComplaintDrawer
         isOpen={isComplaintOpen}
         onClose={() => setIsComplaintOpen(false)}
@@ -198,7 +195,6 @@ const HomeDashboard = () => {
         onPinRequired={handleComplaintPinRequired}
       />
 
-      {/* PIN Modal */}
       <ActionPinModal
         isOpen={pinModal.isOpen}
         onClose={() => setPinModal({ isOpen: false, title: '', actionLabel: '', pendingAction: null })}
@@ -207,10 +203,9 @@ const HomeDashboard = () => {
         actionLabel={pinModal.actionLabel}
       />
 
-      {/* Toast */}
       {toast && (
         <div className={`toast toast-${toast.type}`}>
-          <span>{toast.type === 'success' ? '✓' : '✕'}</span>
+          <span>{toast.type === 'success' ? <Icons.Check size={16} /> : <Icons.Close size={16} />}</span>
           {toast.message}
         </div>
       )}

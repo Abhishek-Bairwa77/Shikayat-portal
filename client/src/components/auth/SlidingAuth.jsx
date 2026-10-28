@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { Icons } from '../../Icons'; 
 import './SlidingAuth.css';
-import logo from '../../assets/logo.png';
-
+import logo from '../../assets/logo.png'
 const SlidingAuth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -10,13 +10,11 @@ const SlidingAuth = () => {
   const [formSuccess, setFormSuccess] = useState('');
   const { login, register } = useAuth();
 
-  // Login form state
   const [loginData, setLoginData] = useState({
     identifier: '',
     password: ''
   });
 
-  // Register form state
   const [registerData, setRegisterData] = useState({
     rollNumber: '',
     username: '',
@@ -43,7 +41,6 @@ const SlidingAuth = () => {
     setFormError('');
     setFormSuccess('');
 
-    // Validation
     if (!loginData.identifier.trim() || !loginData.password.trim()) {
       setFormError('Please enter both identifier and password');
       return;
@@ -63,7 +60,6 @@ const SlidingAuth = () => {
     setFormError('');
     setFormSuccess('');
 
-    // Validation
     const { rollNumber, username, email, password, confirmPassword, actionPin } = registerData;
 
     if (!rollNumber.trim() || !username.trim() || !email.trim() || !password || !actionPin) {
@@ -108,13 +104,37 @@ const SlidingAuth = () => {
   return (
     <div className="auth-container">
       <div className={`auth-wrapper ${isLogin ? 'login-mode' : 'register-mode'}`}>
-        {/* Left Branding Panel — logo as full background */}
-        <div
-          className="branding-panel"
-          style={{ backgroundImage: `url(${logo})` }}
-        >
-          {/* Dark overlay for text readability (CSS handles it via ::before) */}
-         
+        
+        <div className="branding-panel">
+          <div className="branding-content">
+            <div className="brand-logo">
+              <img 
+                src={logo} 
+                alt="SHIKAYAT Logo" 
+                className="custom-logo-img" 
+              />
+              <h1 className="logo-text">SHIKAYAT</h1>
+            </div>
+            <p className="brand-tagline">Student Grievance Redressal Portal</p>
+            
+            <div className="brand-features">
+              <div className="feature-item">
+                <Icons.Lock size={20} />
+                <span>Anonymous & Secure</span>
+              </div>
+              <div className="feature-item">
+                <Icons.Vote size={20} />
+                <span>Democratic Upvoting</span>
+              </div>
+              <div className="feature-item">
+                <Icons.Chart size={20} />
+                <span>Transparent Tracking</span>
+              </div>
+            </div>
+            
+            <p className="brand-footer">Your voice matters. Report safely.</p>
+          </div>
+          
           <div className="branding-decoration">
             <div className="deco-circle deco-1"></div>
             <div className="deco-circle deco-2"></div>
@@ -122,7 +142,6 @@ const SlidingAuth = () => {
           </div>
         </div>
 
-        {/* Toggle Button */}
         <button
           className="toggle-btn"
           onClick={() => {
@@ -132,12 +151,11 @@ const SlidingAuth = () => {
           }}
           aria-label="Toggle auth mode"
         >
-          <span className={`arrow ${isLogin ? '' : 'rotate'}`}>›</span>
+          <span className={`arrow ${isLogin ? '' : 'rotate'}`}>&gt;</span>
         </button>
 
-        {/* Right Form Panel */}
         <div className="form-panel">
-          {/* Login Form */}
+          
           <div className={`form-content login-content ${isLogin ? 'active' : ''}`}>
             <div className="form-header">
               <h2>Welcome Back</h2>
@@ -187,7 +205,6 @@ const SlidingAuth = () => {
             </form>
           </div>
 
-          {/* Register Form */}
           <div className={`form-content register-content ${!isLogin ? 'active' : ''}`}>
             <div className="form-header">
               <h2>Create Account</h2>

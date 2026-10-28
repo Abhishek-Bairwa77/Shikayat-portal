@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import SlidingAuth from './components/Auth/SlidingAuth';
 import HomeDashboard from './components/Dashboard/HomeDashboard';
 import AdminPanel from './components/Admin/AdminPanel';
+import Profile from './components/Profile/Profile';
 import './App.css';
 
 // Protected Route Component
@@ -77,6 +78,7 @@ function AppRoutes() {
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
     </Routes>
   );
 }

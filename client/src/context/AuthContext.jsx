@@ -106,6 +106,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     verifyActionPin,
+    setUser,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin' || user?.role === 'faculty'
   };

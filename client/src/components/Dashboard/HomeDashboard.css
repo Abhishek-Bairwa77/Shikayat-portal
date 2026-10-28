@@ -9,97 +9,131 @@
   padding: 3vh 2vw;
 }
 
-/* Welcome Banner */
+/* =========================================
+   WELCOME BANNER
+   ========================================= */
 .welcome-banner {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2vw;
-  padding: 3vh 2.5vw;
-  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%);
-  border-radius: var(--radius-xl);
-  color: var(--white);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
+  padding: 28px 32px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  color: var(--navy-dark);
   margin-bottom: 3vh;
-  flex-wrap: wrap;
-  box-shadow: 0 10px 30px rgba(15, 30, 54, 0.2);
+  box-shadow: 0 1px 2px rgba(15, 30, 54, 0.05);
 }
 
 .welcome-text h2 {
-  font-size: 1.6vw;
-  font-weight: 700;
-  margin-bottom: 0.8vh;
+  font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--navy-dark);
+  margin-bottom: 6px;
 }
 
 .welcome-text p {
-  font-size: 0.9vw;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: clamp(0.875rem, 0.82rem + 0.2vw, 1rem);
+  color: var(--gray-500);
   line-height: 1.6;
-  max-width: 40vw;
+  max-width: 60ch;
 }
 
+/* =========================================
+   STATS STRIP
+   (gap 1px + grey background = clean divider lines)
+   ========================================= */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1vw;
+  gap: 1px;
+  background: var(--gray-200);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-md);
-  padding: 1.5vh 1.2vw;
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.4vh;
-  min-width: 6vw;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px 20px;
+  background: var(--white);
+  border: none;
+  border-radius: 0;
+  min-width: 0;
 }
 
-.stat-card:hover {
-  background: rgba(255, 255, 255, 0.14);
-  transform: translateY(-3px);
+/* Label upar, number neeche */
+.stat-label {
+  order: 1;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--gray-500);
+  text-transform: none;
+  letter-spacing: 0;
+  text-align: left;
 }
 
 .stat-number {
-  font-size: 1.8vw;
-  font-weight: 800;
+  order: 2;
+  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--navy-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Icon: chhota, muted, top-right corner me */
+.stat-card > *:not(.stat-number):not(.stat-label) {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
   line-height: 1;
+  color: var(--gray-500);
+  opacity: 0.8;
 }
 
-.stat-label {
-  font-size: 0.7vw;
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  letter-spacing: 0.05vw;
-  text-align: center;
+/* Status sirf icon ke color se dikhega, number ke nahi */
+.stat-resolved > *:not(.stat-number):not(.stat-label) { color: #16a34a; }
+.stat-progress > *:not(.stat-number):not(.stat-label) { color: #2563eb; }
+.stat-priority > *:not(.stat-number):not(.stat-label) { color: #dc2626; }
+
+.stat-resolved .stat-number,
+.stat-progress .stat-number,
+.stat-priority .stat-number {
+  color: var(--navy-dark);
 }
 
-.stat-resolved .stat-number { color: #4ade80; }
-.stat-progress .stat-number { color: #60a5fa; }
-.stat-priority .stat-number { color: #f87171; }
-
-/* Toast */
+/* =========================================
+   TOAST
+   ========================================= */
 .toast {
   position: fixed;
   bottom: 3vh;
   right: 2vw;
-  padding: 1.5vh 1.5vw;
+  padding: 12px 16px;
   border-radius: var(--radius-md);
-  font-size: 0.9vw;
+  font-size: 0.9rem;
   font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 0.8vw;
+  gap: 10px;
   box-shadow: var(--shadow-xl);
   z-index: 2000;
   animation: slideUp 0.3s ease;
-  max-width: 30vw;
+  max-width: min(420px, 90vw);
 }
 
 .toast span {
-  font-size: 1.1vw;
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -115,24 +149,36 @@
   border-left: 4px solid var(--accent-red);
 }
 
+/* =========================================
+   TABLET
+   ========================================= */
 @media (max-width: 1024px) {
-  .welcome-text h2 { font-size: 2.2vw; }
-  .welcome-text p { font-size: 1.2vw; max-width: 50vw; }
-  .stat-number { font-size: 2.3vw; }
-  .stat-label { font-size: 0.9vw; }
-  .toast { font-size: 1.1vw; }
-  .toast span { font-size: 1.4vw; }
+  .welcome-banner { padding: 24px; }
 }
 
+/* =========================================
+   MOBILE
+   ========================================= */
 @media (max-width: 768px) {
   .dashboard-main { padding: 2vh 4vw; }
-  .welcome-banner { padding: 3vh 4vw; flex-direction: column; align-items: flex-start; }
-  .welcome-text h2 { font-size: 5vw; }
-  .welcome-text p { font-size: 3.2vw; max-width: 100%; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); width: 100%; gap: 2vw; }
-  .stat-card { padding: 2vh 3vw; min-width: unset; }
-  .stat-number { font-size: 6vw; }
-  .stat-label { font-size: 2.6vw; }
-  .toast { font-size: 3.2vw; max-width: 80vw; right: 4vw; left: 4vw; }
-  .toast span { font-size: 4vw; }
+
+  .welcome-banner {
+    padding: 20px 16px;
+    gap: 18px;
+  }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .stat-card { padding: 14px 16px; }
+
+  .stat-card > *:not(.stat-number):not(.stat-label) {
+    top: 14px;
+    right: 14px;
+  }
+
+  .toast {
+    left: 4vw;
+    right: 4vw;
+    max-width: none;
+  }
 }

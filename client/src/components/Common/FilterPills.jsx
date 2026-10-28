@@ -1,3 +1,4 @@
+import { Icons } from '../../Icons'; // 👈 Centralized Import
 import './FilterPills.css';
 
 const departments = ['All', 'Hostel', 'Academics', 'Infrastructure', 'Mess', 'Sports', 'Library', 'Other'];
@@ -6,8 +7,11 @@ const statuses = ['All', 'submitted', 'in-review', 'in-progress', 'resolved'];
 const FilterPills = ({ activeDepartment, onDepartmentChange, activeStatus, onStatusChange, sortBy, onSortChange }) => {
   return (
     <div className="filter-section">
+      {/* Department Filter */}
       <div className="filter-group">
-        <span className="filter-label">Department:</span>
+        <span className="filter-label">
+          <Icons.Clipboard size={16} className="filter-icon" /> Department:
+        </span>
         <div className="pills-container">
           {departments.map((dept) => (
             <button
@@ -21,6 +25,7 @@ const FilterPills = ({ activeDepartment, onDepartmentChange, activeStatus, onSta
         </div>
       </div>
 
+      {/* Status Filter */}
       <div className="filter-group">
         <span className="filter-label">Status:</span>
         <div className="pills-container">
@@ -36,17 +41,23 @@ const FilterPills = ({ activeDepartment, onDepartmentChange, activeStatus, onSta
         </div>
       </div>
 
+      {/* Sort Dropdown */}
       <div className="filter-group sort-group">
-        <span className="filter-label">Sort:</span>
-        <select
-          className="sort-select"
-          value={sortBy}
-          onChange={(e) => onSortChange(e.target.value)}
-        >
-          <option value="votes">Most Voted</option>
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-        </select>
+        <span className="filter-label">
+          <Icons.Chart size={16} className="filter-icon" /> Sort:
+        </span>
+        <div className="select-wrapper">
+          <select
+            className="sort-select"
+            value={sortBy}
+            onChange={(e) => onSortChange(e.target.value)}
+          >
+            <option value="votes">Most Voted</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+          <Icons.ChevronDown size={14} className="select-chevron" />
+        </div>
       </div>
     </div>
   );
