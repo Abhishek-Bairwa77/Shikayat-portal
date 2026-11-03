@@ -5,6 +5,7 @@ import HomeDashboard from './components/Dashboard/HomeDashboard';
 import AdminPanel from './components/Admin/AdminPanel';
 import Profile from './components/Profile/Profile';
 import './App.css';
+import ScrollFeed from './components/ScrollFeed/ScrollFeed';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -79,7 +80,10 @@ function AppRoutes() {
       />
       <Route path="*" element={<Navigate to="/" replace />} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/scroll" element={<ProtectedRoute><ScrollFeed /></ProtectedRoute>} />
     </Routes>
+
+    
   );
 }
 

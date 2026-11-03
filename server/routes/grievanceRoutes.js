@@ -6,7 +6,9 @@ import {
   upvoteGrievance,
   getMyGrievances,
   getVoteStatus,
-  getStats
+  getStats,
+  getScrollFeed,    
+  addComment 
 } from '../controllers/grievanceController.js';
 import { protect } from '../middleware/authMiddleware.js';
 import { verifyActionPin } from '../middleware/pinMiddleware.js';
@@ -17,6 +19,11 @@ const router = express.Router();
 // Public feed routes
 router.get('/', protect, getGrievances);
 router.get('/stats', protect, getStats);
+// Scroll Feed Routes
+router.get('/feed', protect, getScrollFeed);
+
+// Comment Route
+router.post('/:id/comment', protect, addComment);
 router.get('/my', protect, getMyGrievances);
 
 // Single grievance

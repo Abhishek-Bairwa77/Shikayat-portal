@@ -1,0 +1,466 @@
+/* =========================================
+   SCROLL FEED DARK THEME CSS
+   ========================================= */
+.scroll-page-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #0b1120; /* Deepest Dark Blue */
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* ================= LEFT SIDEBAR ================= */
+.sf-sidebar {
+  width: 280px;
+  background-color: #0f172a;
+  border-right: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  z-index: 10;
+}
+
+.sf-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  margin-bottom: 40px;
+}
+
+.sf-logo-icon {
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.1);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.sf-logo-text {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sf-badge {
+  font-size: 10px;
+  background: #1e293b;
+  color: #94a3b8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.sf-logo-sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.sf-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.sf-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: transparent;
+  color: #94a3b8;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.sf-nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+}
+
+.sf-nav-item.active {
+  background: #1e293b;
+  color: #f8fafc;
+  border-left: 3px solid #06b6d4;
+}
+
+.sf-active-dot {
+  margin-left: auto;
+  width: 8px;
+  height: 8px;
+  background: #06b6d4;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #06b6d4;
+}
+
+.sf-count {
+  margin-left: auto;
+  background: #1e293b;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.sf-count-red {
+  background: #ef4444;
+  color: white;
+}
+
+.sf-lodge-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px;
+  margin: 20px 0;
+  background: transparent;
+  color: #06b6d4;
+  border: 1.5px solid #06b6d4;
+  border-radius: 99px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sf-lodge-btn:hover {
+  background: rgba(6, 182, 212, 0.1);
+}
+
+.sf-user-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #1e293b;
+  cursor: pointer;
+}
+
+.sf-user-avatar {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: #06b6d4;
+}
+
+.sf-user-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.sf-online-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #0f172a;
+}
+
+.sf-user-info h4 {
+  font-size: 15px;
+  margin: 0 0 2px 0;
+  color: #f8fafc;
+}
+
+.sf-user-info p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ================= CENTER FEED ================= */
+.sf-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Custom Scrollbar for Feed */
+.sf-main-content::-webkit-scrollbar { width: 6px; }
+.sf-main-content::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+.sf-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.sf-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #1e293b;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.sf-live-dot {
+  width: 8px;
+  height: 8px;
+  background: #06b6d4;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.sf-header p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ================= THE CARD ================= */
+.sf-feed-container {
+  width: 100%;
+  max-width: 680px;
+}
+
+.sf-card {
+  background: #131c2f;
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sf-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sf-tag-category {
+  background: rgba(6, 182, 212, 0.15);
+  color: #06b6d4;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.sf-tag-status {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.sf-card-title {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.sf-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.sf-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.sf-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sf-image-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+.sf-image-dots span {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+}
+
+.sf-image-dots span.active {
+  background: #ffffff;
+  width: 20px;
+  border-radius: 10px;
+}
+
+.sf-card-desc {
+  font-size: 15px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.sf-read-more {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: #06b6d4;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  width: fit-content;
+}
+
+.sf-read-more:hover {
+  text-decoration: underline;
+}
+
+/* ================= RIGHT ACTIONS ================= */
+.sf-right-actions {
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  position: relative;
+}
+
+.sf-sparkle-icon {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  opacity: 0.3;
+}
+
+.sf-action-btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.sf-action-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sf-action-btn:hover {
+  background: #0f172a;
+  border-color: #06b6d4;
+  color: #06b6d4;
+  transform: translateY(-3px);
+}
+
+.sf-action-count {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f8fafc;
+  margin-top: 4px;
+}
+
+.sf-action-label {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Arrows */
+.sf-scroll-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.sf-arrow-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sf-arrow-btn:hover {
+  color: #f8fafc;
+  background: #0f172a;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+  .sf-sidebar { width: 80px; padding: 24px 10px; align-items: center; }
+  .sf-logo-text, .sf-logo-sub, .sf-nav-item span, .sf-count, .sf-lodge-btn span, .sf-user-info { display: none; }
+  .sf-logo { justify-content: center; }
+  .sf-nav-item { padding: 14px; justify-content: center; }
+  .sf-lodge-btn { padding: 14px; border-radius: 50%; width: 50px; height: 50px; }
+  .sf-card-image-wrapper { height: 250px; }
+}
+
+@media (max-width: 768px) {
+  .scroll-page-container { flex-direction: column; }
+  .sf-sidebar { display: none; /* Mobile bottom nav handles this */ }
+  .sf-right-actions { display: none; /* Hide on mobile or make bottom bar */ }
+  .sf-main-content { padding: 16px; }
+  .sf-card { padding: 16px; border-radius: 16px; }
+  .sf-card-title { font-size: 20px; }
+  .sf-card-image-wrapper { height: 200px; }
+}
