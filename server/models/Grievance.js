@@ -79,6 +79,34 @@ const grievanceSchema = new mongoose.Schema({
       ref: 'User'
     }
   }],
+    feedSection: {
+    type: String,
+    enum: ['raw', 'pending', 'trending', 'approved'],
+    default: 'raw' 
+  },
+
+    comments: [{
+    text: {
+      type: String,
+      required: true
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    isAnonymous: {
+      type: Boolean,
+      default: true // By default sab anonymous hain
+    },
+    isOfficial: {
+      type: Boolean,
+      default: false 
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now
