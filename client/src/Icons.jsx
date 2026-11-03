@@ -50,4 +50,15 @@ export const Icons = {
   Upload: (props) => <Icon name="cloud-arrow-up" {...props} />,
   Paperclip: (props) => <Icon name="paperclip" {...props} />,
   Delete: (props) => <Icon name="backspace" {...props} />,
+    // New Icons for Scroll Feed
+  HomeIcon: (props) => <Icon name="house-door" {...props} />,
+  ScrollIcon: (props) => <Icon name="phone" {...props} />, // Reels style icon
+  ArrowUp: (props) => <Icon name="arrow-up" {...props} />,
+  Comment: (props) => <Icon name="chat" {...props} />,
+  Share: (props) => <Icon name="share" {...props} />,
+  Bookmark: (props) => <Icon name="bookmark" {...props} />,
+  CheckCircle: (props) => <Icon name="check-circle" {...props} />,
+  Bell: (props) => <Icon name="bell" {...props} />,
+  IDBadge: (props) => <Icon name="person-badge" {...props} />,
+  Sparkle: (props) => <Icon name="stars" {...props} />,
 };
