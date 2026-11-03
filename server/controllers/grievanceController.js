@@ -260,3 +260,41 @@ export const getStats = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Add a comment to a grievance
+// @route   POST /api/grievances/:id/comment
+export const addComment = async (req, res, next) => {
+  try {
+    const { text, isAnonymous } = req.body; // Frontend se isAnonymous aayega
+    
+    if (!text) {
+      return res.status(400).json({ success: false, message: 'Comment text is required' });
+    }
+
+    const grievance = await Grievance.findById(req.params.id);
+    if (!grievance) {
+      return res.status(404).json({ success: false, message: 'Grievance not found' });
+    }
+
+    const newComment = {
+      text,
+      user: req.user._id,
+      isAnonymous: isAnonymous !== false, // Agar false nahi bheja, toh default true (anonymous)
+      isOfficial: req.user.role === 'admin' || req.user.role === 'faculty'
+    };
+
+    grievance.comments.push(newComment);
+    await grievance.save();
+
+    // Frontend ko response bhejte waqt hum user details bhi populate kar sakte hain
+    // taaki agar anonymous ho toh naam na dikhe, aur agar real name ho toh dikhe.
+    
+    res.status(201).json({
+      success: true,
+      message: 'Comment added successfully',
+      comments: grievance.comments
+    });
+  } catch (error) {
+    next(error);
+  }
+};
