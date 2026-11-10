@@ -48,6 +48,18 @@ const grievanceSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+    feedSection: {
+    type: String,
+    enum: ['raw', 'pending', 'trending', 'approved', 'rejected'], // 'rejected' add kiya
+    default: 'raw'
+  },
+  comments: [{
+    text: { type: String, required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    isAnonymous: { type: Boolean, default: true },
+    isOfficial: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
+  }],
   attachments: [{
     filename: String,
     originalName: String,
@@ -81,7 +93,7 @@ const grievanceSchema = new mongoose.Schema({
   }],
     feedSection: {
     type: String,
-    enum: ['raw', 'pending', 'trending', 'approved'],
+    enum: ['raw', 'pending', 'trending', 'approved','rejected'],
     default: 'raw' 
   },
 

@@ -4,18 +4,18 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const OLLAMA_CHAT_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434/api/chat';
-const MODEL_NAME = process.env.AI_MODEL_NAME || 'gemma2:2b';
+const MODEL_NAME = process.env.AI_MODEL_NAME || 'gemma4:e2b';
 const TIMEOUT = parseInt(process.env.AI_TIMEOUT_MS) || 30000;
 const NUM_CTX = parseInt(process.env.AI_NUM_CTX) || 2048;
 
 // .env se 'true' ya 'false' string aati hai, usko boolean mein convert kar rahe hain
-const THINK = process.env.AI_THINK === 'true'; 
+const THINK = process.env.AI_THINK === 'false'; 
 
 export const callAIChat = async (systemPrompt, userPrompt, schema = null) => {
   try {
     const messages = [
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt }
+      { role: 'user', content: userPrompt } 
     ];
 
     const payload = {

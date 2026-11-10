@@ -1,5 +1,6 @@
 import Grievance from '../models/Grievance.js';
 import { checkEscalation } from '../utils/escalationEngine.js';
+import { analyzeComplaint } from '../ai-engine/services/moderationService.js';
 
 // @desc    Get all public grievances (sorted by votes)
 // @route   GET /api/grievances
@@ -9,7 +10,9 @@ export const getGrievances = async (req, res, next) => {
     const { department, status, sort } = req.query;
 
     // Build query - exclude confidential grievances from public feed
-    let query = { isConfidential: false };
+    let query = { isConfidential: false,
+                  feedSection:{$ne: 'rejected'}
+     };
 
     if (department && department !== 'All') {
       query.department = department;
@@ -81,19 +84,55 @@ export const createGrievance = async (req, res, next) => {
   try {
     const { title, description, department, category, isConfidential } = req.body;
 
-    // Validate required fields
-    if (!title || !description || !department) {
+    if (!title || !description) {
       return res.status(400).json({
         success: false,
-        message: 'Title, description, and department are required'
+        message: 'Title and description are required'
       });
     }
 
-    // Check for high-sensitivity categories
-    const sensitiveCategories = ['Harassment', 'Ragging', 'Discrimination'];
-    const isSensitive = sensitiveCategories.includes(category);
+    // ==========================================
+    // 🤖 AI MODERATION LAYER
+    // ==========================================
+    let aiResult = { isComplaint: true, category: category || 'Other' };
+    let aiFailed = false;
+    let isFlaggedByAI = false; // 👈 Naya flag
 
-    // Process uploaded files
+    try {
+      const response = await analyzeComplaint(title, description);
+      
+      // Agar AI bole spam/venting hai
+      if (response.isComplaint === false) {
+        isFlaggedByAI = true; // 👈 Flag set karo, par return mat karo
+      }
+
+      aiResult = response;
+      
+    } catch (error) {
+      console.warn('⚠️ AI Moderation Failed:', error.message);
+      aiFailed = true;
+    }
+
+    // ==========================================
+    // CATEGORY & SENSITIVITY LOGIC
+    // ==========================================
+    if(category==='other'){
+      category=aiResult.category;
+    }
+    let finalCategory = category || aiResult.category;
+    
+    if (finalCategory === 'None' || finalCategory === 'self') {
+      finalCategory = 'Other';
+    }
+
+        let finalDepartment = (department && department !== 'Other' && department !== '') 
+                          ? department 
+                          : (aiResult.department || 'Other');
+
+    const sensitiveCategories = ['Harassment', 'Ragging', 'Discrimination', 'Ragging/Harassment'];
+    const isSensitive = sensitiveCategories.includes(finalCategory);
+    const finalIsConfidential = isConfidential === 'true' || isConfidential === true || isSensitive;
+
     const attachments = [];
     if (req.files && req.files.length > 0) {
       req.files.forEach(file => {
@@ -107,36 +146,59 @@ export const createGrievance = async (req, res, next) => {
       });
     }
 
-    // Create grievance
+    // ==========================================
+    // FEED SECTION LOGIC (AI Rejection Handle)
+    // ==========================================
+    let finalFeedSection = 'raw'; // Default
+    
+    if (isFlaggedByAI) {
+      finalFeedSection = 'rejected'; // 👈 Agar AI ne reject kiya toh yahan jayega
+    }
+
+    // ==========================================
+    // SAVE TO DATABASE
+    // ==========================================
     const grievance = await Grievance.create({
       title,
       description,
-      department,
-      category: category || 'General',
-      isConfidential: isConfidential === 'true' || isConfidential === true || isSensitive,
+      department:finalDepartment,
+      category: finalCategory,
+      isConfidential: finalIsConfidential,
       attachments,
       reportedBy: req.user._id,
+      feedSection: finalFeedSection, // 👈 Rejected complaints yahan save hongi
       statusHistory: [{
-        status: 'submitted',
-        remarks: 'Grievance submitted successfully',
+        status: isFlaggedByAI ? 'in-review' : 'submitted', // AI ne reject kiya toh in-review
+        remarks: isFlaggedByAI 
+          ? 'Flagged by AI as potential spam/venting. Pending Admin review.' 
+          : 'Grievance submitted successfully',
         updatedBy: req.user._id
       }]
     });
 
+    // ==========================================
+    // RESPONSE TO FRONTEND
+    // ==========================================
     res.status(201).json({
-      success: true,
-      message: grievance.isConfidential
-        ? 'Confidential grievance submitted. It will be reviewed by the appropriate committee.'
-        : 'Grievance submitted successfully',
+      success: true, // 👈 Success true hi rahega
+      message: isFlaggedByAI
+        ? 'Your complaint has been submitted. However, our AI flagged it for manual review by the admin.'
+        : (grievance.isConfidential
+            ? 'Confidential grievance submitted. It will be reviewed by the appropriate committee.'
+            : 'Grievance submitted successfully'),
+      isFlagged: isFlaggedByAI,
+      aiProcessed: !aiFailed,
       grievance: {
         _id: grievance._id,
         title: grievance.title,
         department: grievance.department,
+        category: grievance.category,
         status: grievance.status,
         isConfidential: grievance.isConfidential,
         createdAt: grievance.createdAt
       }
     });
+
   } catch (error) {
     next(error);
   }
@@ -268,7 +330,11 @@ export const getScrollFeed = async (req, res, next) => {
   try {
     const { tab = 'trending' } = req.query;
 
-    let query = { isConfidential: false }; // Public feed mein confidential nahi aayengi
+    let query = { 
+            isConfidential: false,
+            feedSection: { $ne: 'rejected' } 
+    
+    }; // Public feed mein confidential nahi aayengi
 
     if (tab === 'approved') {
       query.feedSection = 'approved';

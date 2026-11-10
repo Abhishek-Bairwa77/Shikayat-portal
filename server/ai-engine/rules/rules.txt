@@ -101,6 +101,16 @@ Output: {"isComplaint": true, "category": "Ragging/Harassment"} (Reasoning: Clea
 Input: "Wifi password not working in Hostel B"
 Output: {"isComplaint": true, "category": "Hostel Infrastructure"}
 
+### 🛑 RULE 12: DEPARTMENT PREDICTION
+Based on the complaint, assign the most appropriate department from this list:
+- "Hostel": Issues with hostel rooms, wardens, hostel water, electricity, cleanliness.
+- "Academics": Issues with classes, exams, professors, library, lab equipment.
+- "Infrastructure": Issues with college buildings, roads, main campus facilities.
+- "Mess": Issues with food quality, canteen, mess timings, mess staff.
+- "Sports": Issues with sports equipment, grounds, coaches.
+- "Library": Issues with library books, library AC, library timings.
+- "Other": Anything that doesn't fit above.
+
 ### 📝 OUTPUT FORMAT
 You must respond ONLY with valid JSON matching the provided schema. Do not write any explanations outside the JSON.
 
@@ -114,22 +124,22 @@ SCHEMA_START
     "category": {
       "type": "string",
       "enum": [
-        "Mess",
-        "Hostel",
+        "Mess Food Quality",
+        "Hostel Infrastructure",
         "Academics",
-        "Infrastructure",
+        "Faculty Behaviour",
         "Ragging/Harassment",
-        "Sports",
         "Other",
         "self",
         "None"
       ]
+    },
+    "department": {
+      "type": "string",
+      "enum": ["Hostel", "Academics", "Infrastructure", "Mess", "Sports", "Library", "Other"]
     }
   },
-  "required": [
-    "isComplaint",
-    "category"
-  ],
+  "required": ["isComplaint", "category", "department"],
   "additionalProperties": false
 }
 SCHEMA_END
