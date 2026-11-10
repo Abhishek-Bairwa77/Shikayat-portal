@@ -261,6 +261,42 @@ export const getStats = async (req, res, next) => {
   }
 };
 
+// @desc    Get grievances for Scroll Feed (Tabs: trending, approved, raw, pending)
+// @route   GET /api/grievances/feed
+// @access  Private
+export const getScrollFeed = async (req, res, next) => {
+  try {
+    const { tab = 'trending' } = req.query;
+
+    let query = { isConfidential: false }; // Public feed mein confidential nahi aayengi
+
+    if (tab === 'approved') {
+      query.feedSection = 'approved';
+    } else if (tab === 'pending') {
+      query.feedSection = 'pending';
+    } else if (tab === 'raw') {
+      query.feedSection = 'raw';
+    } else {
+      // Default 'trending' ya 'scroll' tab ke liye
+      query.feedSection = 'trending';
+    }
+
+    // Data fetch karein aur latest pehle dikhayein
+    const grievances = await Grievance.find(query)
+      .sort({ createdAt: -1 })
+      .select('-reportedBy -upvotes -officialRemarks -statusHistory') // Sensitive data hide
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      count: grievances.length,
+      grievances
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Add a comment to a grievance
 // @route   POST /api/grievances/:id/comment
 export const addComment = async (req, res, next) => {
