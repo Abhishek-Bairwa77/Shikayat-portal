@@ -13,7 +13,7 @@ import {
 import { protect } from '../middleware/authMiddleware.js';
 import { verifyActionPin } from '../middleware/pinMiddleware.js';
 import upload from '../middleware/uploadMiddleware.js';
-
+import { getResolvedGrievances } from '../controllers/grievanceController.js';
 const router = express.Router();
 
 // Public feed routes
@@ -40,5 +40,6 @@ router.post(
 );
 
 router.post('/:id/upvote', protect, verifyActionPin, upvoteGrievance);
+router.get('/resolved', protect, getResolvedGrievances);
 
 export default router;

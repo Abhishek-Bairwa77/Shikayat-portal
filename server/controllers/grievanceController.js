@@ -389,3 +389,26 @@ export const addComment = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get resolved grievances (For Notifications Page)
+// @route   GET /api/grievances/resolved
+// @access  Private
+export const getResolvedGrievances = async (req, res, next) => {
+  try {
+    const grievances = await Grievance.find({ 
+      status: 'resolved',
+      isConfidential: false // Sirf public resolved complaints
+    })
+      .sort({ updatedAt: -1 }) // Latest resolved pehle
+      .select('-reportedBy -upvotes -statusHistory')
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      count: grievances.length,
+      grievances
+    });
+  } catch (error) {
+    next(error);
+  }
+};
