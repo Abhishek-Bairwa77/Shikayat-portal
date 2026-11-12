@@ -327,30 +327,19 @@ export const getStats = async (req, res, next) => {
 // @route   GET /api/grievances/feed
 // @access  Private
 export const getScrollFeed = async (req, res, next) => {
-  try {
-    const { tab = 'trending' } = req.query;
-
+    try {
+    // Abhi ke liye humne tab filtering hata di hai, taaki sab dikhe
+    // Sirf Confidential aur Rejected ko hata rahe hain
     let query = { 
-            isConfidential: false,
-            feedSection: { $ne: 'rejected' } 
-    
-    }; // Public feed mein confidential nahi aayengi
+      isConfidential: false,
+      feedSection: { $ne: 'rejected' } // Rejected nahi aayengi
+    };
 
-    if (tab === 'approved') {
-      query.feedSection = 'approved';
-    } else if (tab === 'pending') {
-      query.feedSection = 'pending';
-    } else if (tab === 'raw') {
-      query.feedSection = 'raw';
-    } else {
-      // Default 'trending' ya 'scroll' tab ke liye
-      query.feedSection = 'trending';
-    }
-
-    // Data fetch karein aur latest pehle dikhayein
+    // Data fetch karein. 
+    // Sort: Pehle unko dikhao jinpe zyada votes hain, fir naye wale ko.
     const grievances = await Grievance.find(query)
-      .sort({ createdAt: -1 })
-      .select('-reportedBy -upvotes -officialRemarks -statusHistory') // Sensitive data hide
+      .sort({ voteCount: -1, createdAt: -1 }) 
+      .select('-reportedBy -upvotes -officialRemarks -statusHistory') 
       .lean();
 
     res.status(200).json({
