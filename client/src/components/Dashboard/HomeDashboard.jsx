@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { grievanceAPI } from '../../services/api';
-import { Icons } from '../../Icons'; // 👈 Centralized Import
-import Header from '../Common/Header';
-import FilterPills from '../Common/FilterPills';
+import { Icons } from '../../Icons';
+import Sidebar from '../ScrollFeed/Sidebar'; // 👈 Reusable Sidebar
 import ProblemFeed from '../ProblemCards/ProblemFeed';
 import ActionPinModal from '../Modals/ActionPinModal';
 import ComplaintDrawer from '../Modals/ComplaintDrawer';
@@ -29,7 +28,6 @@ const HomeDashboard = () => {
     pendingAction: null
   });
 
-  // Toast
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = 'success') => {
@@ -136,56 +134,83 @@ const HomeDashboard = () => {
   };
 
   return (
-    <div className="dashboard-container">
-      <Header onOpenComplaint={() => setIsComplaintOpen(true)} />
+    <div className="dashboard-dark-container">
+      <Sidebar />
 
-      <main className="dashboard-main">
-        <div className="welcome-banner">
-          <div className="welcome-text">
-            <h2>Welcome back, {user?.username}!</h2>
-            <p>Your voice matters. Report issues anonymously and vote to prioritize what needs attention.</p>
+      <main className="dashboard-main-content">
+        {/* Top Header */}
+        <div className="dash-header">
+          <div>
+            <h1 className="dash-welcome">Welcome back, {user?.username}!</h1>
+            <p className="dash-subtext">Your voice matters. Report issues anonymously and vote to prioritize.</p>
           </div>
-          
-          {stats && (
-            <div className="stats-grid">
-              <div className="stat-card">
-                <span className="stat-icon"><Icons.Clipboard size={20} /></span>
-                <span className="stat-number">{stats.total}</span>
-                <span className="stat-label">Total Issues</span>
-              </div>
-              <div className="stat-card stat-resolved">
-                <span className="stat-icon"><Icons.StatusResolved size={20} /></span>
-                <span className="stat-number">{stats.resolved}</span>
-                <span className="stat-label">Resolved</span>
-              </div>
-              <div className="stat-card stat-progress">
-                <span className="stat-icon"><Icons.StatusProgress size={20} /></span>
-                <span className="stat-number">{stats.inProgress}</span>
-                <span className="stat-label">In Progress</span>
-              </div>
-              <div className="stat-card stat-priority">
-                <span className="stat-icon"><Icons.Flame size={20} /></span>
-                <span className="stat-number">{stats.highPriority}</span>
-                <span className="stat-label">High Priority</span>
-              </div>
-            </div>
-          )}
+         
         </div>
 
-        <FilterPills
-          activeDepartment={department}
-          onDepartmentChange={setDepartment}
-          activeStatus={status}
-          onStatusChange={setStatus}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-        />
+        {/* Stats Grid */}
+        {stats && (
+          <div className="dash-stats-grid">
+            <div className="dash-stat-card">
+              <div className="dash-stat-icon blue"><Icons.Clipboard size={24} /></div>
+              <div className="dash-stat-info">
+                <span className="dash-stat-value">{stats.total}</span>
+                <span className="dash-stat-label">Total Issues</span>
+              </div>
+            </div>
+            <div className="dash-stat-card">
+              <div className="dash-stat-icon green"><Icons.StatusResolved size={24} /></div>
+              <div className="dash-stat-info">
+                <span className="dash-stat-value">{stats.resolved}</span>
+                <span className="dash-stat-label">Resolved</span>
+              </div>
+            </div>
+            <div className="dash-stat-card">
+              <div className="dash-stat-icon orange"><Icons.StatusProgress size={24} /></div>
+              <div className="dash-stat-info">
+                <span className="dash-stat-value">{stats.inProgress}</span>
+                <span className="dash-stat-label">In Progress</span>
+              </div>
+            </div>
+            <div className="dash-stat-card">
+              <div className="dash-stat-icon red"><Icons.Flame size={24} /></div>
+              <div className="dash-stat-info">
+                <span className="dash-stat-value">{stats.highPriority}</span>
+                <span className="dash-stat-label">High Priority</span>
+              </div>
+            </div>
+          </div>
+        )}
 
-        <ProblemFeed
-          grievances={grievances}
-          loading={loading}
-          onVoteClick={handleVoteClick}
-        />
+        {/* Filters (You can style this dark later) */}
+        <div className="dash-filters">
+          <div className="dash-filter-group">
+            <span>Department:</span>
+            <select value={department} onChange={(e) => setDepartment(e.target.value)}>
+              <option value="All">All</option>
+              <option value="Hostel">Hostel</option>
+              <option value="Academics">Academics</option>
+              <option value="Infrastructure">Infrastructure</option>
+              <option value="Mess">Mess</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="dash-filter-group">
+            <span>Sort by:</span>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="votes">Most Voted</option>
+              <option value="newest">Newest First</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Feed (Now using ProblemFeed component but with dark styles applied via wrapper) */}
+        <div className="dash-feed-wrapper">
+          <ProblemFeed
+            grievances={grievances}
+            loading={loading}
+            onVoteClick={handleVoteClick}
+          />
+        </div>
       </main>
 
       <ComplaintDrawer
@@ -204,7 +229,7 @@ const HomeDashboard = () => {
       />
 
       {toast && (
-        <div className={`toast toast-${toast.type}`}>
+        <div className={`toast toast-${toast.type}`} style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
           <span>{toast.type === 'success' ? <Icons.Check size={16} /> : <Icons.Close size={16} />}</span>
           {toast.message}
         </div>

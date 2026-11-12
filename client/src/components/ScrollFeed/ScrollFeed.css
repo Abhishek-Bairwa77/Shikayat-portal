@@ -1,26 +1,32 @@
 /* =========================================
-   SCROLL FEED DARK THEME CSS
+   SCROLL FEED DARK THEME CSS (Reels Style)
+   Card = 9:16, image full-bleed BEHIND title/description
    ========================================= */
 .scroll-page-container {
   display: flex;
   height: 100vh;
   width: 100vw;
-  background-color: #0b1120; /* Deepest Dark Blue */
+  background-color: #0b1120;
   color: #f8fafc;
   font-family: 'Inter', sans-serif;
   overflow: hidden;
 }
 
-/* ================= LEFT SIDEBAR ================= */
+/* ================= LEFT SIDEBAR (unchanged) ================= */
 .sf-sidebar {
   width: 280px;
+  min-width: 280px;
   background-color: #0f172a;
   border-right: 1px solid #1e293b;
   display: flex;
   flex-direction: column;
   padding: 24px 20px;
   z-index: 10;
+  overflow-x: hidden;
+  overflow-y: auto;            /* zoom/chhoti screen par cut hone ki jagah scroll */
+  scrollbar-width: none;
 }
+.sf-sidebar::-webkit-scrollbar { display: none; }
 
 .sf-logo {
   display: flex;
@@ -197,21 +203,22 @@
 /* ================= CENTER FEED ================= */
 .sf-main-content {
   flex: 1;
+  min-width: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
 }
 
-/* Custom Scrollbar for Feed */
-.sf-main-content::-webkit-scrollbar { width: 6px; }
-.sf-main-content::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-
 .sf-header {
-  text-align: center;
-  margin-bottom: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 14px 0 10px;
+  flex-shrink: 0;
+  z-index: 20;
 }
 
 .sf-live-badge {
@@ -224,7 +231,6 @@
   font-size: 14px;
   font-weight: 600;
   color: #e2e8f0;
-  margin-bottom: 12px;
 }
 
 .sf-live-dot {
@@ -232,124 +238,212 @@
   height: 8px;
   background: #06b6d4;
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  animation: sf-pulse 2s infinite;
 }
 
-.sf-header p {
-  color: #64748b;
-  font-size: 14px;
+@keyframes sf-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
 }
 
-/* ================= THE CARD ================= */
-.sf-feed-container {
+/* Scroll container: ek swipe = ek card */
+.sf-reels-container {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  max-width: 680px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
 }
 
+.sf-reels-container::-webkit-scrollbar { display: none; }
+.sf-reels-container { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* IMPORTANT: wrapper height == container height (ScrollFeed.jsx ka
+   handleScroll isi par activeIndex nikalta hai). Padding border-box me hai. */
+.sf-reel-wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 20px 20px;
+}
+
+/* ================= REEL CARD ================= */
 .sf-card {
-  background: #131c2f;
-  border: 1px solid #1e293b;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 900px;
+  aspect-ratio: 9 / 16;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.sf-card-tags {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sf-tag-category {
-  background: rgba(6, 182, 212, 0.15);
-  color: #06b6d4;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 6px;
-  letter-spacing: 0.5px;
-}
-
-.sf-tag-status {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 6px;
-}
-
-.sf-card-title {
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #f8fafc;
-  margin: 0;
-}
-
-.sf-card-meta {
-  display: flex;
-  align-items: center;
+  justify-content: flex-end;   /* text neeche, Reels ki tarah */
   gap: 8px;
-  font-size: 13px;
-  color: #94a3b8;
+  padding: 20px 20px 24px;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
 }
 
+/* Dark gradient: neeche (text ke liye) aur upar (tags ke liye) */
+.sf-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to top,
+      rgba(5, 10, 20, 0.96) 0%,
+      rgba(5, 10, 20, 0.80) 32%,
+      rgba(5, 10, 20, 0) 62%),
+    linear-gradient(to bottom,
+      rgba(5, 10, 20, 0.65) 0%,
+      rgba(5, 10, 20, 0) 22%);
+}
+
+/* IMAGE: poore card me, sabse peeche */
 .sf-card-image-wrapper {
-  position: relative;
-  width: 100%;
-  height: 320px;
-  border-radius: 12px;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  border-radius: 0;
   overflow: hidden;
-  margin: 4px 0;
 }
 
 .sf-card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.sf-image-dots {
+/* Agar image nahi hai: gradient placeholder, ye bhi peeche */
+.sf-default-image {
   position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 55%, #0b1120 100%);
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 28%;
+  color: #475569;
+}
+
+.sf-default-image svg {
+  margin-bottom: 8px;
+  opacity: 0.45;
+}
+
+.sf-default-image span {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* TAGS: card ke upar */
+.sf-card-tags {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sf-tag-category,
+.sf-tag-status {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 99px;
+  letter-spacing: 0.4px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sf-tag-category {
+  background: rgba(6, 182, 212, 0.25);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.45);
+}
+
+.sf-tag-status {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
+/* TEXT: image ke upar. order se meta -> title -> desc */
+.sf-card-meta,
+.sf-card-title,
+.sf-card-desc {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+
+.sf-card-meta {
+  order: 1;
+  display: flex;
+  align-items: center;
   gap: 6px;
+  font-size: 12.5px;
+  color: #cbd5e1;
 }
 
-.sf-image-dots span {
-  width: 8px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 50%;
-}
-
-.sf-image-dots span.active {
-  background: #ffffff;
-  width: 20px;
-  border-radius: 10px;
+.sf-card-title {
+  order: 2;
+  font-size: clamp(19px, 1.8vw, 24px);
+  font-weight: 800;
+  line-height: 1.25;
+  color: #ffffff;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .sf-card-desc {
-  font-size: 15px;
-  color: #cbd5e1;
-  line-height: 1.6;
-  margin: 0;
+  order: 3;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;       /* poora text detail page me dikhega */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .sf-read-more {
+  position: relative;
+  z-index: 2;
+  order: 4;
   display: flex;
   align-items: center;
   gap: 6px;
   background: transparent;
   border: none;
-  color: #06b6d4;
-  font-size: 15px;
+  color: #67e8f9;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   padding: 0;
@@ -360,23 +454,40 @@
   text-decoration: underline;
 }
 
+/* Loading & Empty States */
+.sf-loading, .sf-error, .sf-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: #64748b;
+  font-size: 16px;
+  gap: 12px;
+  width: 100%;
+}
+
+.sf-empty h3 {
+  color: #e2e8f0;
+  font-size: 20px;
+  margin: 0;
+}
+
 /* ================= RIGHT ACTIONS ================= */
 .sf-right-actions {
   width: 120px;
+  min-width: 120px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 32px;
-  position: relative;
+  padding-right: 20px;
+  justify-content: safe center; /* overflow ho to upar se cut nahi hoga */
+  overflow-y: auto;
+  scrollbar-width: none;
 }
-
-.sf-sparkle-icon {
-  position: absolute;
-  bottom: 30px;
-  right: 30px;
-  opacity: 0.3;
-}
+.sf-right-actions::-webkit-scrollbar { display: none; }
 
 .sf-action-btn-group {
   display: flex;
@@ -418,49 +529,159 @@
   color: #94a3b8;
 }
 
-/* Arrows */
-.sf-scroll-arrows {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.sf-arrow-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #1e293b;
-  border: 1px solid #334155;
-  color: #94a3b8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.sf-arrow-btn:hover {
-  color: #f8fafc;
-  background: #0f172a;
-}
-
 /* ================= RESPONSIVE ================= */
 @media (max-width: 1024px) {
-  .sf-sidebar { width: 80px; padding: 24px 10px; align-items: center; }
-  .sf-logo-text, .sf-logo-sub, .sf-nav-item span, .sf-count, .sf-lodge-btn span, .sf-user-info { display: none; }
-  .sf-logo { justify-content: center; }
-  .sf-nav-item { padding: 14px; justify-content: center; }
-  .sf-lodge-btn { padding: 14px; border-radius: 50%; width: 50px; height: 50px; }
-  .sf-card-image-wrapper { height: 250px; }
+  .sf-sidebar { width: 80px; min-width: 80px; padding: 20px 10px; align-items: center; }
+  .sf-logo-text, .sf-logo-sub, .sf-count, .sf-user-info { display: none; }
+  .sf-logo { justify-content: center; margin-bottom: 28px; }
+  .sf-logo-icon { padding: 8px; }
+  .sf-nav { width: 100%; align-items: center; }
+
+  /* Sidebar.jsx me label <span> me nahi hai (bare text), isliye font-size:0
+     se text chhupta hai. Icon (<i>) ka inline font-size hai, wo bacha rehta hai. */
+  .sf-nav-item {
+    font-size: 0;
+    gap: 0;
+    width: 50px;
+    padding: 14px 0;
+    justify-content: center;
+  }
+  .sf-nav-item.active { border-left: none; box-shadow: inset 3px 0 0 #06b6d4; }
+  .sf-active-dot { position: absolute; top: 7px; right: 7px; margin: 0; width: 6px; height: 6px; }
+
+  .sf-lodge-btn {
+    font-size: 0;
+    gap: 0;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  .sf-user-footer { width: 100%; justify-content: center; }
+
+  .sf-right-actions { width: 80px; min-width: 80px; padding-right: 10px; }
+  .sf-action-btn { width: 50px; height: 50px; }
 }
 
+/* SHORT SCREEN / ZOOM (browser zoom se CSS height chhoti ho jati hai):
+   header overlay, card 9:16 ki jagah chaudi, sab kuch compact */
+@media (max-height: 620px) and (min-width: 769px) {
+  .sf-header { position: absolute; top: 0; left: 0; padding: 8px 0; pointer-events: none; }
+  .sf-live-badge {
+    font-size: 12px;
+    padding: 5px 12px;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .sf-reel-wrapper { padding: 8px 12px; }
+  .sf-card {
+    aspect-ratio: auto;
+    width: 100%;
+    max-width: 520px;
+    max-height: none;
+    padding: 14px 16px 16px;
+    gap: 6px;
+  }
+  .sf-card-tags { top: 44px; left: 14px; right: 14px; gap: 8px; }
+  .sf-tag-category, .sf-tag-status { font-size: 11px; padding: 4px 10px; }
+  .sf-card-meta { font-size: 11.5px; }
+  .sf-card-title { font-size: 17px; -webkit-line-clamp: 2; }
+  .sf-card-desc { font-size: 13px; -webkit-line-clamp: 3; }
+
+  .sf-sidebar { padding-top: 14px; padding-bottom: 14px; }
+  .sf-logo { margin-bottom: 16px; }
+  .sf-nav { gap: 4px; }
+  .sf-nav-item { padding-top: 9px; padding-bottom: 9px; }
+  .sf-lodge-btn { margin: 10px 0; }
+  .sf-user-footer { padding-top: 12px; }
+
+  .sf-right-actions { gap: 14px; }
+  .sf-action-btn { width: 44px; height: 44px; }
+  .sf-action-count { font-size: 14px; margin-top: 0; }
+  .sf-action-label { display: none; }
+}
+
+/* MOBILE: card poori screen, action buttons card ke upar float */
 @media (max-width: 768px) {
-  .scroll-page-container { flex-direction: column; }
-  .sf-sidebar { display: none; /* Mobile bottom nav handles this */ }
-  .sf-right-actions { display: none; /* Hide on mobile or make bottom bar */ }
-  .sf-main-content { padding: 16px; }
-  .sf-card { padding: 16px; border-radius: 16px; }
-  .sf-card-title { font-size: 20px; }
-  .sf-card-image-wrapper { height: 200px; }
+  .scroll-page-container {
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .sf-sidebar { display: none; }
+
+  .sf-main-content {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* Header card ke upar overlay */
+  .sf-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px 0;
+    pointer-events: none;
+  }
+
+  .sf-live-badge {
+    font-size: 12px;
+    padding: 6px 12px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .sf-reel-wrapper { padding: 0; }
+
+  .sf-card {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px 76px 28px 18px; /* right padding: buttons ke liye jagah */
+  }
+
+  .sf-card-tags {
+    top: 56px;
+    left: 18px;
+    right: 18px;
+  }
+
+  /* Right actions: Reels ki tarah card ke upar, right side */
+  .sf-right-actions {
+    position: fixed;
+    right: 10px;
+    bottom: 90px;
+    width: auto;
+    min-width: 0;
+    padding: 0;
+    gap: 18px;
+    z-index: 30;
+  }
+
+  .sf-action-btn {
+    width: 46px;
+    height: 46px;
+    background: rgba(15, 23, 42, 0.55);
+    border-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .sf-action-count {
+    font-size: 14px;
+    margin-top: 2px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .sf-action-label { display: none; }
 }

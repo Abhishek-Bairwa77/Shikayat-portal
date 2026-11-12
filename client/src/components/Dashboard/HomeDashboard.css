@@ -1,184 +1,211 @@
-.dashboard-container {
-  min-height: 100vh;
-  background: var(--gray-100);
-}
-
-.dashboard-main {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 3vh 2vw;
-}
-
 /* =========================================
-   WELCOME BANNER
+   DASHBOARD DARK THEME
    ========================================= */
-.welcome-banner {
+.dashboard-dark-container {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 24px;
-  padding: 28px 32px;
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
-  color: var(--navy-dark);
-  margin-bottom: 3vh;
-  box-shadow: 0 1px 2px rgba(15, 30, 54, 0.05);
-}
-
-.welcome-text h2 {
-  font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.75rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--navy-dark);
-  margin-bottom: 6px;
-}
-
-.welcome-text p {
-  font-size: clamp(0.875rem, 0.82rem + 0.2vw, 1rem);
-  color: var(--gray-500);
-  line-height: 1.6;
-  max-width: 60ch;
-}
-
-/* =========================================
-   STATS STRIP
-   (gap 1px + grey background = clean divider lines)
-   ========================================= */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--gray-200);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-md);
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #0b1120;
+  color: #f8fafc;
   overflow: hidden;
 }
 
-.stat-card {
-  position: relative;
+.dashboard-main-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* Header */
+.dash-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: flex-start;
-  gap: 4px;
-  padding: 16px 20px;
-  background: var(--white);
-  border: none;
-  border-radius: 0;
-  min-width: 0;
+  margin-bottom: 40px;
 }
 
-/* Label upar, number neeche */
-.stat-label {
-  order: 1;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--gray-500);
-  text-transform: none;
-  letter-spacing: 0;
-  text-align: left;
+.dash-welcome {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 8px 0;
 }
 
-.stat-number {
-  order: 2;
-  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem);
-  font-weight: 600;
-  line-height: 1.1;
-  color: var(--navy-dark);
-  font-variant-numeric: tabular-nums;
+.dash-subtext {
+  color: #94a3b8;
+  font-size: 15px;
+  margin: 0;
 }
 
-/* Icon: chhota, muted, top-right corner me */
-.stat-card > *:not(.stat-number):not(.stat-label) {
-  position: absolute;
-  top: 16px;
-  right: 18px;
-  width: 18px;
-  height: 18px;
-  font-size: 18px;
-  line-height: 1;
-  color: var(--gray-500);
-  opacity: 0.8;
-}
-
-/* Status sirf icon ke color se dikhega, number ke nahi */
-.stat-resolved > *:not(.stat-number):not(.stat-label) { color: #16a34a; }
-.stat-progress > *:not(.stat-number):not(.stat-label) { color: #2563eb; }
-.stat-priority > *:not(.stat-number):not(.stat-label) { color: #dc2626; }
-
-.stat-resolved .stat-number,
-.stat-progress .stat-number,
-.stat-priority .stat-number {
-  color: var(--navy-dark);
-}
-
-/* =========================================
-   TOAST
-   ========================================= */
-.toast {
-  position: fixed;
-  bottom: 3vh;
-  right: 2vw;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: 500;
+.dash-new-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  box-shadow: var(--shadow-xl);
-  z-index: 2000;
-  animation: slideUp 0.3s ease;
-  max-width: min(420px, 90vw);
+  gap: 8px;
+  background: #06b6d4;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.toast span {
-  font-size: 1.1rem;
-  font-weight: 700;
+.dash-new-btn:hover {
+  background: #0891b2;
+  transform: translateY(-2px);
 }
 
-.toast-success {
-  background: var(--white);
-  color: var(--accent-green);
-  border-left: 4px solid var(--accent-green);
+/* Stats Grid */
+.dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
 }
 
-.toast-error {
-  background: var(--white);
-  color: var(--accent-red);
-  border-left: 4px solid var(--accent-red);
+.dash-stat-card {
+  background: #131c2f;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: transform 0.2s;
+}
+
+.dash-stat-card:hover {
+  transform: translateY(-3px);
+  border-color: #334155;
+}
+
+.dash-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-stat-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+.dash-stat-icon.green { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.dash-stat-icon.orange { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+.dash-stat-icon.red { background: rgba(220, 38, 38, 0.15); color: #dc2626; }
+
+.dash-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.dash-stat-label {
+  font-size: 13px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Filters */
+.dash-filters {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  background: #131c2f;
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 1px solid #1e293b;
+}
+
+.dash-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-filter-group span {
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dash-filter-group select {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 1px solid #1e293b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.dash-filter-group select:focus {
+  border-color: #06b6d4;
 }
 
 /* =========================================
-   TABLET
+   OVERRIDE PROBLEM CARDS FOR DARK THEME
+   (Kyunki ProblemFeed abhi light theme me hai)
    ========================================= */
+.dash-feed-wrapper .problem-feed {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.dash-feed-wrapper .problem-card {
+  background: #131c2f;
+  border: 1px solid #1e293b;
+  color: #f8fafc;
+}
+
+.dash-feed-wrapper .problem-card:hover {
+  border-color: #334155;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+}
+
+.dash-feed-wrapper .card-title {
+  color: #f8fafc;
+}
+
+.dash-feed-wrapper .card-description {
+  color: #cbd5e1;
+}
+
+.dash-feed-wrapper .card-footer {
+  border-top-color: #1e293b;
+}
+
+.dash-feed-wrapper .vote-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.dash-feed-wrapper .vote-btn:hover:not(.voted) {
+  background: #06b6d4;
+  border-color: #06b6d4;
+  color: white;
+}
+
+.dash-feed-wrapper .count-number {
+  color: #f8fafc;
+}
+
+/* Mobile Responsive */
 @media (max-width: 1024px) {
-  .welcome-banner { padding: 24px; }
+  .dash-stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* =========================================
-   MOBILE
-   ========================================= */
 @media (max-width: 768px) {
-  .dashboard-main { padding: 2vh 4vw; }
-
-  .welcome-banner {
-    padding: 20px 16px;
-    gap: 18px;
-  }
-
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-
-  .stat-card { padding: 14px 16px; }
-
-  .stat-card > *:not(.stat-number):not(.stat-label) {
-    top: 14px;
-    right: 14px;
-  }
-
-  .toast {
-    left: 4vw;
-    right: 4vw;
-    max-width: none;
-  }
+  .dashboard-main-content { padding: 20px; }
+  .dash-header { flex-direction: column; gap: 20px; align-items: flex-start; }
+  .dash-stats-grid { grid-template-columns: 1fr; }
+  .dash-filters { flex-direction: column; }
 }

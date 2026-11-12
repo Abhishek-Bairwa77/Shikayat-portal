@@ -55,10 +55,7 @@ const ComplaintDrawer = ({ isOpen, onClose, onSuccess, onPinRequired }) => {
       setError('Please enter a description');
       return;
     }
-    if (!formData.department) {
-      setError('Please select a department');
-      return;
-    }
+  
 
     // Trigger PIN modal - pass form data to parent
     onPinRequired({

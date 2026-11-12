@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState,useEffect } from 'react';
+import { useNavigate,useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Icons } from '../../Icons'; // 👈 Centralized Import
 import Header from '../Common/Header';
@@ -11,7 +11,20 @@ import './Profile.css';
 const Profile = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('profile');
+
+   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tab = queryParams.get('tab');
+    if (tab === 'grievances') {
+      setActiveTab('grievances');
+    } else if (tab === 'security') {
+      setActiveTab('security');
+    } else {
+      setActiveTab('profile');
+    }
+  }, [location.search]);
 
   const handleLogout = () => {
     logout();
@@ -30,6 +43,8 @@ const Profile = () => {
         return <MyProfileTab />;
     }
   };
+
+  
 
   return (
     <div className="profile-page-container">

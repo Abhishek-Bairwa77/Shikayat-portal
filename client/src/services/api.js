@@ -43,7 +43,9 @@ export const grievanceAPI = {
   upvote: (id, actionPin) => api.post(`/grievances/${id}/upvote`, { actionPin }),
   getMy: () => api.get('/grievances/my'),
   getVoteStatus: (id) => api.get(`/grievances/${id}/vote-status`),
-  getStats: () => api.get('/grievances/stats')
+  getStats: () => api.get('/grievances/stats'),
+  getScrollFeed: (tab = 'trending') => api.get(`/grievances/feed?tab=${tab}`),
+  getResolved: () => api.get('/grievances/resolved')
 };
 
 // Admin API functions

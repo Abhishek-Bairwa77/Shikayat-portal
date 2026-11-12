@@ -1,174 +1,271 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { grievanceAPI } from '../../services/api';
 import { Icons } from '../../Icons';
+import Sidebar from './Sidebar'; // 👈 Common Sidebar Import
+import ActionPinModal from '../Modals/ActionPinModal'; 
 import './ScrollFeed.css';
 
-const mockGrievances = [
-  {
-    _id: '1',
-    category: 'HOSTEL & SANITATION',
-    status: 'Pending',
-    title: 'Hostel Washrooms Have Not Been Cleaned for Several Days',
-    description: "The sanitation staff hasn't attended to the 2nd floor restrooms in Block B since Thursday. The drains are backed up causing waterlogging and a terrible smell. Please look into this immediately.",
-    voteCount: 278,
-    commentCount: 38,
-    shareCount: 19,
-    timeAgo: '4h ago',
-    image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=1000', // Dummy Bathroom Image
-  }
-];
-
 const ScrollFeed = () => {
-  const { user, logout } = useAuth();
+  const { verifyActionPin } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('scroll');
+  const [searchParams] = useSearchParams();
+  
+  // URL se tab uthayenge. Agar kuch nahi hai toh 'trending' default hoga.
+  const currentTab = searchParams.get('tab') || 'trending';
+  
+  const [grievances, setGrievances] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const feedContainerRef = useRef(null);
+
+  // Upvote & Modal states
+  const [toast, setToast] = useState(null);
+  const [pinModal, setPinModal] = useState({
+    isOpen: false,
+    title: '',
+    actionLabel: '',
+    pendingAction: null
+  });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  // Jab tab change ho, toh data fetch karein
+  useEffect(() => {
+    const fetchFeed = async () => {
+      setLoading(true);
+      setError('');
+      setActiveIndex(0); // Scroll wapas top par le aayenge
+      
+      try {
+        // Backend ko tab bhej rahe hain
+        const response = await grievanceAPI.getScrollFeed(currentTab);
+        setGrievances(response.data.grievances);
+        
+        // Scroll container ko top par reset karein
+        if (feedContainerRef.current) {
+          feedContainerRef.current.scrollTop = 0;
+        }
+      } catch (err) {
+        console.error('Failed to fetch feed:', err);
+        setError('Failed to load feed. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeed();
+  }, [currentTab]); // 👈 Jab bhi tab change hoga, data fetch hoga
+
+  const handleScroll = () => {
+    if (feedContainerRef.current) {
+      const container = feedContainerRef.current;
+      const index = Math.round(container.scrollTop / container.clientHeight);
+      if (index !== activeIndex) {
+        setActiveIndex(index);
+      }
+    }
+  };
+
+  // ==========================================
+  // UPVOTE LOGIC
+  // ==========================================
+  const handleVoteClick = (grievanceId) => {
+    setPinModal({
+      isOpen: true,
+      title: 'Confirm Your Vote',
+      actionLabel: 'Cast Vote',
+      pendingAction: async (pin) => {
+        try {
+          const response = await grievanceAPI.upvote(grievanceId, pin);
+          
+          setGrievances(prev => prev.map(g => 
+            g._id === grievanceId 
+              ? { ...g, voteCount: response.data.voteCount } 
+              : g
+          ));
+
+          showToast(`Vote registered! Total: ${response.data.voteCount}`, 'success');
+          return { success: true };
+        } catch (err) {
+          const message = err.response?.data?.message || 'Vote failed';
+          if (err.response?.data?.alreadyVoted) {
+            return { success: false, error: 'You have already voted on this issue' };
+          }
+          return { success: false, error: message };
+        }
+      }
+    });
+  };
+
+  const handlePinSubmit = async (pin) => {
+    const pinCheck = await verifyActionPin(pin);
+    if (!pinCheck.success) {
+      return { success: false, error: pinCheck.error };
+    }
+
+    if (pinModal.pendingAction) {
+      const result = await pinModal.pendingAction(pin);
+      if (result.success) {
+        setPinModal({ isOpen: false, title: '', actionLabel: '', pendingAction: null });
+      }
+      return result;
+    }
+    return { success: true };
+  };
+
+  // ==========================================
+  // SHARE LOGIC
+  // ==========================================
+  const handleShareClick = async () => {
+    const activeGrievance = grievances[activeIndex];
+    if (!activeGrievance) return;
+
+    const shareData = {
+      title: 'SHIKAYAT - Grievance',
+      text: `Check out this grievance: ${activeGrievance.title}`,
+      url: `${window.location.origin}/grievance/${activeGrievance._id}`
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        showToast('Shared successfully!', 'success');
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        showToast('Link copied to clipboard!', 'success');
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') showToast('Failed to share', 'error');
+    }
+  };
+
+  const activeGrievance = grievances[activeIndex] || { voteCount: 0, comments: [] };
 
   return (
     <div className="scroll-page-container">
-      {/* ================= LEFT SIDEBAR ================= */}
-      <aside className="sf-sidebar">
-        <div className="sf-logo" onClick={() => navigate('/dashboard')}>
-          <div className="sf-logo-icon"><Icons.Shield size={32} /></div>
-          <div>
-            <div className="sf-logo-text">SHIKAYAT <span className="sf-badge">PORTAL</span></div>
-            <div className="sf-logo-sub">Campus Grievance Redressal</div>
-          </div>
-        </div>
-
-        <nav className="sf-nav">
-          <button className="sf-nav-item" onClick={() => navigate('/dashboard')}>
-            <Icons.HomeIcon size={22} /> Home
-          </button>
-          <button className="sf-nav-item active">
-            <Icons.ScrollIcon size={22} /> Scroll
-            <span className="sf-active-dot"></span>
-          </button>
-          <button className="sf-nav-item">
-            <Icons.CheckCircle size={22} /> Approved
-            <span className="sf-count">142</span>
-          </button>
-          <button className="sf-nav-item">
-            <Icons.Bell size={22} /> Notifications
-            <span className="sf-count sf-count-red">3</span>
-          </button>
-          <button className="sf-nav-item" onClick={() => navigate('/profile')}>
-            <Icons.FileText size={22} /> Your Complaints
-            <span className="sf-count">2</span>
-          </button>
-        </nav>
-
-        <button className="sf-lodge-btn" onClick={() => navigate('/dashboard')}>
-          <Icons.Plus size={20} /> Lodge Complaint
-        </button>
-
-        <div className="sf-user-footer">
-          <div className="sf-user-avatar">
-            {user?.avatar ? <img src={user.avatar} alt="avatar" /> : (user?.username?.charAt(0) || 'A')}
-            <div className="sf-online-dot"></div>
-          </div>
-          <div className="sf-user-info">
-            <h4>{user?.username || 'Anonymous Student'}</h4>
-            <p onClick={() => navigate('/profile')}>View Profile</p>
-          </div>
-        </div>
-      </aside>
+      {/* Reusable Sidebar */}
+      <Sidebar />
 
       {/* ================= CENTER FEED ================= */}
       <main className="sf-main-content">
         <div className="sf-header">
           <div className="sf-live-badge">
-            <span className="sf-live-dot"></span> Live Campus Grievance Stream
+            <span className="sf-live-dot"></span> 
+            {currentTab === 'trending' && 'Live Campus Grievance Stream'}
+            {currentTab === 'approved' && 'Resolved Complaints'}
+            {currentTab === 'pending' && 'Pending Complaints'}
           </div>
-          <p>Only verified college students can post. Your identity stays private.</p>
         </div>
 
-        <div className="sf-feed-container">
-          {mockGrievances.map((item) => (
-            <div className="sf-card" key={item._id}>
-              
-              {/* Card Header */}
-              <div className="sf-card-tags">
-                <span className="sf-tag-category">{item.category}</span>
-                <span className="sf-tag-status">🟡 {item.status}</span>
-              </div>
-              
-              {/* Card Title */}
-              <h1 className="sf-card-title">{item.title}</h1>
-              
-              {/* Card Meta */}
-              <div className="sf-card-meta">
-                <Icons.IDBadge size={16} /> Reported Anonymously • {item.timeAgo}
-              </div>
+        <div className="sf-reels-container" ref={feedContainerRef} onScroll={handleScroll}>
+          {loading ? (
+            <div className="sf-loading">Loading grievances...</div>
+          ) : error ? (
+            <div className="sf-error">{error}</div>
+          ) : grievances.length === 0 ? (
+            <div className="sf-empty">
+              <Icons.Inbox size={64} color="#64748b" />
+              <h3>No complaints found in this section.</h3>
+            </div>
+          ) : (
+            grievances.map((item) => (
+              <div className="sf-reel-wrapper" key={item._id}>
+                <div className="sf-card">
+                  <div className="sf-card-tags">
+                    <span className="sf-tag-category">{item.department || 'Other'}</span>
+                    <span className="sf-tag-status">🟡 {item.status}</span>
+                  </div>
+                  
+                  <h1 className="sf-card-title">{item.title}</h1>
+                  
+                  <div className="sf-card-meta">
+                    <Icons.IDBadge size={16} /> Reported Anonymously • {new Date(item.createdAt).toLocaleDateString()}
+                  </div>
 
-              {/* Card Image */}
-              <div className="sf-card-image-wrapper">
-                <img src={item.image} alt="Evidence" className="sf-card-image" />
-                <div className="sf-image-dots">
-                  <span className="active"></span>
-                  <span></span>
-                  <span></span>
+                  {item.attachments && item.attachments.length > 0 && item.attachments[0].mimetype.startsWith('image/') ? (
+                    <div className="sf-card-image-wrapper">
+                      <img src={`http://localhost:5000${item.attachments[0].path}`} alt="Evidence" className="sf-card-image" />
+                    </div>
+                  ) : (
+                    <div className="sf-default-image">
+                      <Icons.FileText size={40} />
+                      <span>No Image Attached</span>
+                    </div>
+                  )}
+
+                  <p className="sf-card-desc">
+                    {item.description}
+                  </p>
                 </div>
               </div>
-
-              {/* Card Description */}
-              <p className="sf-card-desc">
-                {item.description}
-              </p>
-              <button className="sf-read-more">Read more <Icons.ChevronDown size={16} /></button>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </main>
 
       {/* ================= RIGHT ACTIONS ================= */}
       <aside className="sf-right-actions">
-        {/* Floating Sparkle Icon (Bottom Right) */}
-        <div className="sf-sparkle-icon">
-          <Icons.Sparkle size={32} color="#ffffff" />
-        </div>
-
         {/* Upvote */}
         <div className="sf-action-btn-group">
-          <button className="sf-action-btn">
+          <button 
+            className="sf-action-btn"
+            onClick={() => handleVoteClick(activeGrievance._id)} 
+          >
             <Icons.ArrowUp size={28} />
           </button>
-          <span className="sf-action-count">278</span>
+          <span className="sf-action-count">{activeGrievance.voteCount || 0}</span>
           <span className="sf-action-label">Upvotes</span>
         </div>
 
         {/* Comments */}
         <div className="sf-action-btn-group">
-          <button className="sf-action-btn" onClick={() => alert('Comments section coming soon in next step!')}>
+          <button className="sf-action-btn">
             <Icons.Comment size={26} />
           </button>
-          <span className="sf-action-count">38</span>
+          <span className="sf-action-count">{activeGrievance.comments?.length || 0}</span>
           <span className="sf-action-label">Comments</span>
         </div>
 
         {/* Share */}
         <div className="sf-action-btn-group">
-          <button className="sf-action-btn">
+          <button className="sf-action-btn" onClick={handleShareClick}>
             <Icons.Share size={26} />
           </button>
-          <span className="sf-action-count">19</span>
+          <span className="sf-action-count">0</span>
           <span className="sf-action-label">Shares</span>
         </div>
 
-        {/* Track / Bookmark */}
+        {/* Track */}
         <div className="sf-action-btn-group">
           <button className="sf-action-btn">
             <Icons.Bookmark size={26} />
           </button>
           <span className="sf-action-label">Track</span>
         </div>
-
-        {/* Up / Down Navigation Arrows */}
-        <div className="sf-scroll-arrows">
-          <button className="sf-arrow-btn"><Icons.ChevronDown size={24} style={{transform: 'rotate(180deg)'}} /></button>
-          <button className="sf-arrow-btn"><Icons.ChevronDown size={24} /></button>
-        </div>
       </aside>
+
+      {/* Action PIN Modal */}
+      <ActionPinModal
+        isOpen={pinModal.isOpen}
+        onClose={() => setPinModal({ isOpen: false, title: '', actionLabel: '', pendingAction: null })}
+        onSubmit={handlePinSubmit}
+        title={pinModal.title}
+        actionLabel={pinModal.actionLabel}
+      />
+
+      {/* Toast */}
+      {toast && (
+        <div className={`toast toast-${toast.type}`} style={{ position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)' }}>
+          <span>{toast.type === 'success' ? <Icons.Check size={16} /> : <Icons.Close size={16} />}</span>
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 };
