@@ -21,7 +21,10 @@ const grievanceSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Category is required'],
-    enum: ['General', 'Harassment', 'Ragging', 'Discrimination', 'Safety', 'Other']
+    enum: [
+      'General', 'Harassment', 'Ragging', 'Discrimination', 'Safety', 'Other',
+      'Mess Food Quality', 'Hostel Infrastructure', 'Academics', 'Faculty Behaviour', 'Ragging/Harassment' 
+    ]
   },
   upvotes: [{
     type: mongoose.Schema.Types.ObjectId,
