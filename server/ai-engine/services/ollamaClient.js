@@ -8,7 +8,6 @@ const MODEL_NAME = process.env.AI_MODEL_NAME || 'gemma4:e2b';
 const TIMEOUT = parseInt(process.env.AI_TIMEOUT_MS) || 30000;
 const NUM_CTX = parseInt(process.env.AI_NUM_CTX) || 2048;
 
-// .env se 'true' ya 'false' string aati hai, usko boolean mein convert kar rahe hain
 const THINK = process.env.AI_THINK === 'false'; 
 
 export const callAIChat = async (systemPrompt, userPrompt, schema = null) => {
@@ -22,7 +21,7 @@ export const callAIChat = async (systemPrompt, userPrompt, schema = null) => {
       model: MODEL_NAME,
       messages: messages,
       stream: false,
-      think: THINK, // 👈 Yahan direct .env se set ho gaya
+      think: THINK, 
       keep_alive: '30m',
       options: {
         temperature: 0,
@@ -32,7 +31,7 @@ export const callAIChat = async (systemPrompt, userPrompt, schema = null) => {
 
     if (schema) payload.format = schema;
 
-    console.log(`🤖 AI Chat Request Sent to ${MODEL_NAME}...`);
+    console.log(` AI Chat Request Sent to ${MODEL_NAME}...`);
     const startTime = Date.now();
 
     const response = await axios.post(OLLAMA_CHAT_URL, payload, { timeout: TIMEOUT });
@@ -47,14 +46,14 @@ export const callAIChat = async (systemPrompt, userPrompt, schema = null) => {
         const cleanJsonStr = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
         return JSON.parse(cleanJsonStr);
       } catch (parseError) {
-        console.error('❌ AI JSON Parse Error:', parseError.message);
+        console.error(' AI JSON Parse Error:', parseError.message);
         throw new Error('AI_INVALID_JSON');
       }
     }
 
     return aiText;
   } catch (error) {
-    console.error('❌ AI Core Engine Error:', error.message);
+    console.error('AI Core Engine Error:', error.message);
     throw new Error('AI_SERVICE_UNAVAILABLE');
   }
 };
