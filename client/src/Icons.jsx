@@ -1,5 +1,5 @@
 import React from 'react';
-
+import home_logo from '../src/assets/home_logo.png';
 // 1. Base Component jo Bootstrap icon render karega
 export const Icon = ({ name, size = 20, className = '', color, style = {} }) => {
   const iconClass = name.startsWith('bi-') ? name : `bi-${name}`;
@@ -33,7 +33,14 @@ export const Icons = {
   ChevronDown: (props) => <Icon name="chevron-down" {...props} />,
   Loader: (props) => <Icon name="arrow-clockwise" {...props} />,
   Lock: (props) => <Icon name="lock-fill" {...props} />,
-  Shield: (props) => <Icon name="shield-lock" {...props} />,
+  Shield: (props) => (
+    <img src={home_logo} 
+         alt ="Shield"
+         style={{ width:  "100%", height:  "100%", objectFit:'fill'}}
+
+    
+    />
+  ),
   Key: (props) => <Icon name="key" {...props} />,
   Alert: (props) => <Icon name="exclamation-triangle" {...props} />,
   Flame: (props) => <Icon name="fire" {...props} />,

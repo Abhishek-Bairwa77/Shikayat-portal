@@ -18,7 +18,7 @@ const Sidebar = () => {
   return (
     <aside className="sf-sidebar">
       <div className="sf-logo" onClick={() => navigate('/dashboard')}>
-        <div className="sf-logo-icon"><Icons.Shield size={32} /></div>
+        <div className="sf-logo-icon"><Icons.Shield size={40} /></div>
         <div>
           <div className="sf-logo-text">SHIKAYAT <span className="sf-badge">PORTAL</span></div>
           <div className="sf-logo-sub">Campus Grievance Redressal</div>
