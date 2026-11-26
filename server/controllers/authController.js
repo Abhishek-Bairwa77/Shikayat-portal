@@ -16,7 +16,7 @@ export const register = async (req, res, next) => {
     const { rollNumber, username, email, mobile, password, actionPin, department } = req.body;
 
     // Validate required fields
-    if (!rollNumber || !username || !email || !password || !actionPin || !department) {
+    if (!rollNumber || !username || !email || !password || !actionPin || !department || !mobile) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
@@ -30,10 +30,17 @@ export const register = async (req, res, next) => {
         message: 'Action PIN must be exactly 4 digits'
       });
     }
-
+    
+    // check if mobile number is 10 digit 
+    if (!/^[6-9]\d{9}$/.test(mobile.trim())) {
+    return res.status(400).json({
+          success: false,
+          message: 'Please check mobile number'
+        });
+  }
     // Check if user exists (1 Roll Number = 1 Account policy)
     const existingUser = await User.findOne({
-      $or: [{ rollNumber: rollNumber.toUpperCase() }, { email: email.toLowerCase() }]
+      $or: [{ rollNumber: rollNumber.toUpperCase() }, { email: email.toLowerCase() }, {mobile:mobile},{username:username}]
     });
 
     if (existingUser) {
@@ -43,6 +50,21 @@ export const register = async (req, res, next) => {
           message: 'An account with this Roll Number already exists'
         });
       }
+
+       if (existingUser.mobile === mobile) {
+        return res.status(400).json({
+          success: false,
+          message: 'An account with this mobile number already exists'
+        });
+      }
+
+       if (existingUser.username === username) {
+        return res.status(400).json({
+          success: false,
+          message: 'An account with this username already exists'
+        });
+      }
+      
       return res.status(400).json({
         success: false,
         message: 'An account with this email already exists'
